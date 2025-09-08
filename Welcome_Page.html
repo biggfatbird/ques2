@@ -1,120 +1,30 @@
-<!DOCTYPE HTML>
-<HTML lang="en">
-<HEAD>
-    <SCRIPT src="Tagline_WP.js" defer></SCRIPT>
-<META CHARSET="UTF-8">
-<META NAME="viewport" CONTENT="width=device-width, initial scale=1.0">
-<TITLE>
-WELCOME PAGE
-</TITLE>
-<STYLE>
-body
-{
-margin : 0;
-padding : 0;
-height : 100vh;
-display : flex;
-flex-direction : column;
-justify-content : center;
-align-items : center;
-font-family : "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-text-align : center;
-background : linear-gradient(135deg, #ff416c, #ff4b2b, #1d2b64, #f8cdda);
-background-size : 400% 400%;
-animation : gradientBG 12s ease infinite;
-color : white;
+<h2 id="welcomeText">Loading...</h2>
+<button onclick="logout()">Logout</button>
+
+<script>
+(async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("You must login first!");
+    window.location.href = "InstitutionLogin.html";
+    return;
+  }
+
+  const res = await fetch("http://127.0.0.1:5000/profile", {
+    headers: { "x-access-token": token }
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    alert(data.message);
+    window.location.href = "InstitutionLogin.html";
+  } else {
+    document.getElementById("welcomeText").innerText = data.message;
+  }
+})();
+
+function logout() {
+  localStorage.removeItem("token");
+  window.location.href = "InstitutionLogin.html";
 }
-@keyframes gradientBG
-{
-0% {background-position : 0% 50%;}
-50% {background-position : 100% 50%;}
-100% {background-position : 0% 50%;}
-}
-h1
-{
-font-size : 2rem;
-margin-bottom : 20px;
-}
-.btn1{
-padding : 12px 24px;
-font-size : 1rem;
-font-weight : bold;
-border : none;
-border-radius : 20px;
-margin-bottom : 5px;
-background : #1D2B64;
-color : white;
-cursor : pointer;
-transition : 0.3s ease;
-}
-.btn2{
-padding : 12px 24px;
-font-size : 1rem;
-font-weight : bold;
-border : none;
-border-radius : 20px;
-margin-top : 5px;
-margin-bottom : 5px;
-background : #804CFF;
-color : white;
-cursor : pointer;
-transition : 0.3s ease;
-}
-.btn3{
-padding : 12px 24px;
-font-size : 1rem;
-font-weight : bold;
-border : none;
-border-radius : 20px;
-margin-top : 5px;
-margin-bottom : 5px;
-background : #CD5C5C;
-color : white;
-cursor : pointer;
-transition : 0.3s ease;
-}
-.btn1:hover
-{
-color : #1D2B64;
-background : white;
-}
-.btn2:hover
-{
-color : #804CFF;
-background : white;
-}
-.btn3:hover
-{
-color : #cD5C5C;
-background : white;
-}
-h2
-{
-font-size : 1.5rem;
-font-family : monospace;
-font-weight : bold;
-margin-top : 10px;
-height : 2rem;
-white-space : nowrap;
-overflow : hidden;
-color : black;
-border-right : 2px solid black;
-}
-footer 
-{
-position: absolute;
-bottom: 10px;
-font-size: 0.9rem;
-color: rgba(255,255,255,0.9);
-}
-</STYLE>
-</HEAD>
-<BODY>
-    <H1>WELCOME TO QUESTIFY!</H1>
-    <H2 id="tagline"></H2>
-    <BUTTON class="btn1" autofocus onclick="window.location.href='InstitutionLogin.html'">INSTITUTION LOGIN</BUTTON>
-    <BUTTON class="btn2" autofocus onclick="window.location.href='Signup.html'">NEW? SIGNUP</BUTTON>
-    <FOOTER>© TRIDEV TECHIES - 2025</FOOTER>
-    </SCRIPT>
-</BODY>
-</HTML>
+</script>

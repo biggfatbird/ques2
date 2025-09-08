@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Environmental Facts</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #2e8b57;
+    }
+    #facts-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+    .fact-card {
+      background: #ffffff;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .fact-card:hover {
+      transform: scale(1.03);
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 25px;
+      border: none;
+      border-radius: 8px;
+      background-color: #2e8b57;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #3cb371;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Quick Environmental Facts</h1>
+  <div id="facts-container">
+    <!-- AI-generated facts will appear here -->
+  </div>
+  <button id="generate-facts">Get New Facts</button>
+
+  <script>
+    const container = document.getElementById('facts-container');
+    const button = document.getElementById('generate-facts');
+
+    async function getEnvironmentalFacts() {
+      container.innerHTML = '<p>Loading facts...</p>';
+
+      try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer YOUR_OPENAI_API_KEY'
+          },
+          body: JSON.stringify({
+            model: "gpt-4",
+            messages: [
+              { role: "system", content: "You are a helpful assistant that shares recent environmental facts in a short, easy-to-read format." },
+              { role: "user", content: "Give me 5 recent environmental facts about climate change, pollution, and biodiversity in simple terms." }
+            ],
+            max_tokens: 250,
+            temperature: 0.7
+          })
+        });
+
+        const data = await response.json();
+        const factsText = data.choices[0].message.content;
+        
+        // Split facts into lines
+        const facts = factsText.split(/\n|\r\n/).filter(line => line.trim() !== '');
+        container.innerHTML = '';
+        facts.forEach(fact => {
+          const card = document.createElement('div');
+          card.className = 'fact-card';
+          card.textContent = fact.replace(/^\d+[\.\)]\s*/, ''); // remove numbering
+          container.appendChild(card);
+        });
+      } catch (error) {
+        container.innerHTML = `<p style="color:red;">Error fetching facts: ${error}</p>`;
+      }
+    }
+
+    button.addEventListener('click', getEnvironmentalFacts);
+
+    // Load facts on page load
+    getEnvironmentalFacts();
+  </script>
+
+</body>
+</html>
